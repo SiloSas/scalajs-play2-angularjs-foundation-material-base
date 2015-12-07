@@ -1,0 +1,66 @@
+@()
+<!DOCTYPE html>
+<html lang="en" ng-app="todomvc" data-framework="angularjs">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Des toits en ville</title>
+
+  <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/tools.css")">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/font-awesome.css")">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/angular-material.css")">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/animate.min.css")">
+
+  <script src="http://maps.google.com/maps/api/js"></script>
+
+  <script src="@routes.Assets.versioned("lib/jquery/jquery.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/angular.min.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/angular-animate.min.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/angular-aria.min.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/angular-material.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/mm-foundation.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/angular-route.min.js")"></script>
+  <script src="@routes.Assets.versioned("plugins/ng-map.min.js")"></script>
+  <script src="@routes.Assets.versioned("javascripts/todomvc-client-fastopt.js")"></script>
+  <script src="@routes.Assets.versioned("javascripts/todomvc-client-launcher.js")"></script>
+  <style>[ng-cloak] { display: none; }</style>
+</head>
+<body>
+
+
+  <md-toolbar class="absolute transparent zIndex4">
+    <div>
+      <div class = "float-right margin20 paddingRight20" hide-sm>
+        <a href="#/" class = "padding10">Accueil</a>
+        <ng-contact class = "padding10 textPrimColor pointer">Contact</ng-contact>
+        <a href="/mentionsLegales" class = "padding10">Mentions légales</a>
+      </div>
+
+      <rooms-nav ng-controller = "roomPagesController" class="zIndex4 float-left"></rooms-nav>
+    </div>
+  </md-toolbar>
+
+  <data-search-bar class="zIndex5"></data-search-bar>
+
+  <md-sidenav  class="md-sidenav-left md-whiteframe-z2" md-component-id="left" hide-gt-md>
+    <md-toolbar class="md-theme-indigo">
+      <h1 class="md-toolbar-tools">Sidenav Left</h1>
+    </md-toolbar>
+    <md-content layout-padding ng-controller = "roomPagesController">
+      <md-button ng-click="directive.close()" class="md-primary slide-left" hide-gt-md>
+        Close Sidenav Left
+      </md-button>
+      <a href="#/rooms/{{room.id}}" class="column primCol md-button float-left small-10"
+      ng-click="directive.close()" data-ng-repeat="room in rooms">{{room.name}}</a>
+      <a href="#/" class = "column primCol md-button float-left small-10">Accueil</a>
+      <ng-contact class = "padding10 textPrimColor pointer">Contact</ng-contact>
+      <a href="/mentionsLegales" class = "column primCol md-button float-left small-10">Mentions légales</a>
+    </md-content>
+  </md-sidenav>
+
+  <md-content flex class="height100p mainContainer " ng-view=""></md-content>
+
+</body>
+</html>
