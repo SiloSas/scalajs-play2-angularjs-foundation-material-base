@@ -16,7 +16,7 @@ resolvers += Resolver.url("scala-js-snapshots",
 
 
 // Sbt plugins
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.3")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.0")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.5")
 

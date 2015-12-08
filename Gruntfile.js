@@ -20,6 +20,22 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'clean:server',
+      'wiredep',
+      'concurrent:server',
+      'autoprefixer',
+      'connect:livereload',
+      'watch'
+    ]);
+  });
+
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -34,11 +50,19 @@ module.exports = function (grunt) {
       },
 
       compass: {
-        files: ['scalajvm/public/{,*/}*.{scss,sass}'],
+        files: ['client/src/main/scala/{,*/}*.{scss,sass}'],
         tasks: 'compass'/*,
-        options: {
-          livereload: 9000,
-        }*/
+         options: {
+         livereload: 9000,
+         }*/
+      },
+
+      htmlmin: {
+        files: ['client/src/main/scala/{,*/}*.html'],
+        tasks: 'htmlmin'/*,
+         options: {
+         livereload: 9000,
+         }*/
       },
 
       gruntfile: {
@@ -46,7 +70,7 @@ module.exports = function (grunt) {
       },
 
       concat: {
-        files: ['Gruntfile.js', 'bower_components/*/*.{scss,sass}'],
+        files: ['Gruntfile.js', 'bower_components/*/*.js'],
         tasks: 'concat'
       }
     },
@@ -60,8 +84,8 @@ module.exports = function (grunt) {
             return [
               connect.static('.tmp'),
               connect().use(
-                '/public/bower_components',
-                connect.static('./public/bower_components')
+                  '/public/bower_components',
+                  connect.static('./public/bower_components')
               ),
               connect.static(appConfig.app)
             ];
@@ -76,8 +100,8 @@ module.exports = function (grunt) {
               connect.static('.tmp'),
               connect.static('test'),
               connect().use(
-                '/public/bower_components',
-                connect.static('./public/bower_components')
+                  '/public/bower_components',
+                  connect.static('./public/bower_components')
               ),
               connect.static(appConfig.app)
             ];
@@ -125,7 +149,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
-        src: ['scalajvm/app/views/index.scala.html'],
+        src: ['server/app/views/index.scala.html'],
         ignorePath:  /\.\.\//
       },
       sass: {
@@ -137,11 +161,11 @@ module.exports = function (grunt) {
     // Compiles Sass to CSS and generates necessary files if requested
     compass: {
       options: {
-        sassDir: 'scalajvm/public/scss',
-        cssDir: 'scalajvm/public/stylesheets',
+        sassDir: 'server/public/scss',
+        cssDir: 'server/public/stylesheets',
         generatedImagesDir: '.tmp/images/generated',
-        imagesDir: 'scalajvm/public/images',
-        fontsDir: 'scalajvm/public/stylesheets/fonts',
+        imagesDir: 'server/public/images',
+        fontsDir: 'server/public/stylesheets/fonts',
         importPath: './bower_components',
         httpImagesPath: '/images',
         httpGeneratedImagesPath: '/images/generated',
@@ -152,7 +176,7 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
-          generatedImagesDir: '<%= yeoman.dist %>/scalajvm/public/images/generated'
+          generatedImagesDir: '<%= yeoman.dist %>/server/public/images/generated'
         }
       },
       server: {
@@ -166,9 +190,9 @@ module.exports = function (grunt) {
     filerev: {
       dist: {
         src: [
-          '<%= yeoman.dist %>/scalajvm/public/stylesheets/{,*/}*.css',
-          '<%= yeoman.dist %>/scalajvm/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/scalajvm/public/stylesheets/fonts/*'
+          '<%= yeoman.dist %>/server/public/stylesheets/{,*/}*.css',
+          '<%= yeoman.dist %>/server/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= yeoman.dist %>/server/public/stylesheets/fonts/*'
         ]
       }
     },
@@ -181,44 +205,66 @@ module.exports = function (grunt) {
 
       angularMaterial: {
         src: 'bower_components/angular-material/angular-material.js',
-        dest: 'scalajvm/public/plugins/angular-material.js'
+        dest: 'server/public/plugins/angular-material.js'
       },
 
       angularFoundation: {
         src: 'bower_components/angular-foundation/mm-foundation-tpls.min.js',
-        dest: 'scalajvm/public/plugins/mm-foundation.min.js'
+        dest: 'server/public/plugins/mm-foundation.min.js'
       },
 
       angularAnimate: {
         src: 'bower_components/angular-animate/angular-animate.min.js',
-        dest: 'scalajvm/public/plugins/angular-animate.min.js'
+        dest: 'server/public/plugins/angular-animate.min.js'
       },
 
       angulararia: {
         src: 'bower_components/angular-aria/angular-aria.min.js',
-        dest: 'scalajvm/public/plugins/angular-aria.min.js'
+        dest: 'server/public/plugins/angular-aria.min.js'
       },
 
       angular: {
         src: 'bower_components/angular/angular.min.js',
-        dest: 'scalajvm/public/plugins/angular.min.js'
+        dest: 'server/public/plugins/angular.min.js'
       },
 
       angularRoute: {
         src: 'bower_components/angular-route/angular-route.min.js',
-        dest: 'scalajvm/public/plugins/angular-route.min.js'
+        dest: 'server/public/plugins/angular-route.min.js'
       },
 
       angularMap: {
         src: 'bower_components/ngmap/build/scripts/ng-map.min.js',
-        dest: 'scalajvm/public/plugins/ng-map.min.js'
+        dest: 'server/public/plugins/ng-map.min.js'
+      }
+
+    },
+    htmlmin: {
+      dist: {
+        options: {
+          collapseWhitespace: true,
+          conservativeCollapse: true,
+          collapseBooleanAttributes: true,
+          removeCommentsFromCDATA: true,
+          removeOptionalTags: true
+        },
+        files: [
+          {
+            expand: true,     // Enable dynamic expansion.
+            cwd: 'client/src/main/scala/',      // Src matches are relative to this path.
+            src: ['**/*.html'], // Actual pattern(s) to match.
+            dest: 'server/public/templates/'   // Destination path prefix.
+          }
+        ]
       }
     },
+
+
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: 'scalajvm/app/index.scala.html',
+      html: 'server/app/index.scala.html',
       options: {
         dest: '<%= yeoman.dist %>',
         flow: {
@@ -235,10 +281,10 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/scalajvm/public/templates/{,*/}*.html', 'components/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/scalajvm/public/stylesheets/{,*/}*.css'],
+      html: ['<%= yeoman.dist %>/server/public/templates/{,*/}*.html', 'components/{,*/}*.html'],
+      css: ['<%= yeoman.dist %>/server/public/stylesheets/{,*/}*.css'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/scalajvm/public/images']
+        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/server/public/images']
       }
     },
 
@@ -272,7 +318,7 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: 'scalajvm/public/images',
+          cwd: 'server/public/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/images'
         }]
@@ -283,42 +329,26 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: 'scalajvm/public/images',
+          cwd: 'server/public/images',
           src: '{,*/}*.svg',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
     },
 
-    htmlmin: {
-      dist: {
-        options: {
-          collapseWhitespace: true,
-          conservativeCollapse: true,
-          collapseBooleanAttributes: true,
-          removeCommentsFromCDATA: true,
-          removeOptionalTags: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>scalajvm/public/template',
-          src: ['*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
-    },
+
 
     // ng-annotate tries to make the code safe for minification automatically
     // by using the Angular long form for dependency injection.
     //ngAnnotate: {
-      //dist: {
-        //files: [{
-          //expand: true,
-          //cwd: '.tmp/concat/scripts',
-          //src: ['*.js', '!oldieshim.js'],
-          //dest: '.tmp/concat/scripts'
-        //}]
-      //}
+    //dist: {
+    //files: [{
+    //expand: true,
+    //cwd: '.tmp/concat/scripts',
+    //src: ['*.js', '!oldieshim.js'],
+    //dest: '.tmp/concat/scripts'
+    //}]
+    //}
     //},
 
     // Replace Google CDN references
@@ -340,9 +370,9 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             '*.html',
-            'scalajvm/public/{,*/}*.html',
-            'scalajvm/public/images/{,*/}*.{webp}',
-            'scalajvm/public/fonts/{,*/}*.*'
+            'server/public/{,*/}*.html',
+            'server/public/images/{,*/}*.{webp}',
+            'server/public/fonts/{,*/}*.*'
           ]
         }, {
           expand: true,
@@ -353,7 +383,7 @@ module.exports = function (grunt) {
       },
       styles: {
         expand: true,
-        cwd: '<%= yeoman.app %>scalajvm/public/stylesheets',
+        cwd: '<%= yeoman.app %>server/public/stylesheets',
         dest: '.tmp/stylesheets/',
         src: '{,*/}*.css'
       }
@@ -376,26 +406,10 @@ module.exports = function (grunt) {
 
     // Test settings
     /*karma: {
-      unit: {
-        configFile: 'test/karma.conf.js'
-      }
-    }*/
-  });
-
-
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
-    grunt.task.run([
-      'clean:server',
-      'wiredep',
-      'concurrent:server',
-      'autoprefixer',
-      'connect:livereload',
-      'watch'
-    ]);
+     unit: {
+     configFile: 'test/karma.conf.js'
+     }
+     }*/
   });
 
   grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {

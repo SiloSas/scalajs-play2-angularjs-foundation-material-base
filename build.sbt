@@ -18,7 +18,9 @@ lazy val server = (project in file("server")).settings(
   resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
+    "org.webjars" %% "webjars-play" % "2.4.0-1",
     "org.webjars" % "jquery" % "1.11.1",
+    "com.lihaoyi" %% "upickle" % "0.3.4",
     "org.webjars" % "angularjs" % "1.4.8",
     specs2 % Test
   )
@@ -32,6 +34,7 @@ lazy val client = (project in file("client")).settings(
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+    "com.lihaoyi" %%% "upickle" % "0.3.4",
     "com.greencatsoft" %%% "scalajs-angular" % "0.6"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
@@ -39,6 +42,11 @@ lazy val client = (project in file("client")).settings(
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(scalaVersion := scalaV).
+  jvmSettings(
+    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided"
+  ).
+  jsSettings(
+  ).
   jsConfigure(_ enablePlugins ScalaJSPlay)
 
 lazy val sharedJvm = shared.jvm

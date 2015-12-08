@@ -1,3 +1,4 @@
+package Room
 
 import com.greencatsoft.angularjs.core.Scope
 
@@ -6,8 +7,8 @@ import shared.Room
 
 trait RoomScope extends Scope {
 
-  var rooms: js.Array[shared.Room] = js.native
+  var rooms: js.Array[Room] = js.native
 
-  var room: shared.Room = js.native
+  var room: Room = js.native
 
 }
