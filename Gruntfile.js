@@ -1,10 +1,5 @@
 'use strict';
 
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
 
@@ -19,21 +14,6 @@ module.exports = function (grunt) {
     app: require('./bower.json').appPath || 'app',
     dist: 'dist'
   };
-
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
-    grunt.task.run([
-      'clean:server',
-      'wiredep',
-      'concurrent:server',
-      'autoprefixer',
-      'connect:livereload',
-      'watch'
-    ]);
-  });
 
 
   // Define the configuration for all the tasks
@@ -51,18 +31,12 @@ module.exports = function (grunt) {
 
       compass: {
         files: ['client/src/main/scala/{,*/}*.{scss,sass}'],
-        tasks: 'compass'/*,
-         options: {
-         livereload: 9000,
-         }*/
+        tasks: 'compass'
       },
 
       htmlmin: {
         files: ['client/src/main/scala/{,*/}*.html'],
-        tasks: 'htmlmin'/*,
-         options: {
-         livereload: 9000,
-         }*/
+        tasks: 'htmlmin'
       },
 
       gruntfile: {
@@ -75,64 +49,23 @@ module.exports = function (grunt) {
       }
     },
 
-    // The actual grunt server settings
-    connect: {
-      livereload: {
-        options: {
-          open: true,
-          middleware: function (connect) {
-            return [
-              connect.static('.tmp'),
-              connect().use(
-                  '/public/bower_components',
-                  connect.static('./public/bower_components')
-              ),
-              connect.static(appConfig.app)
-            ];
-          }
-        }
-      },
-      test: {
-        options: {
-          port: 9001,
-          middleware: function (connect) {
-            return [
-              connect.static('.tmp'),
-              connect.static('test'),
-              connect().use(
-                  '/public/bower_components',
-                  connect.static('./public/bower_components')
-              ),
-              connect.static(appConfig.app)
-            ];
-          }
-        }
-      },
-      dist: {
-        options: {
-          open: true,
-          base: '<%= yeoman.dist %>'
-        }
-      }
-    },
-
     // Empties folders to start fresh
-    clean: {
+    /*clean: {
       dist: {
         files: [{
           dot: true,
           src: [
             '.tmp',
-            '<%= yeoman.dist %>/{,*/}*',
-            '!<%= yeoman.dist %>/.git{,*/}*'
+            '<%= yeoman.dist %>/{,*!/}*',
+            '!<%= yeoman.dist %>/.git{,*!/}*'
           ]
         }]
       },
       server: '.tmp'
-    },
+    },*/
 
     // Add vendor prefixed styles
-    autoprefixer: {
+    /*autoprefixer: {
       options: {
         browsers: ['last 1 version']
       },
@@ -140,23 +73,23 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '.tmp/stylesheets/',
-          src: '{,*/}*.css',
+          src: '{,*!/}*.css',
           dest: '.tmp/stylesheets/'
         }]
       }
-    },
+    },*/
 
     // Automatically inject Bower components into the app
-    wiredep: {
+    /*wiredep: {
       app: {
         src: ['server/app/views/index.scala.html'],
         ignorePath:  /\.\.\//
       },
       sass: {
-        src: ['stylesheets/{,*/}*.{scss,sass}'],
+        src: ['stylesheets/{,*!/}*.{scss,sass}'],
         ignorePath: /(\.\.\/){1,2}bower_components\//
       }
-    },
+    },*/
 
     // Compiles Sass to CSS and generates necessary files if requested
     compass: {
@@ -187,15 +120,15 @@ module.exports = function (grunt) {
     },
 
     // Renames files for browser caching purposes
-    filerev: {
+    /*filerev: {
       dist: {
         src: [
-          '<%= yeoman.dist %>/server/public/stylesheets/{,*/}*.css',
-          '<%= yeoman.dist %>/server/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/server/public/stylesheets/fonts/*'
+          '<%= yeoman.dist %>/server/public/stylesheets/{,*!/}*.css',
+          '<%= yeoman.dist %>/server/public/images/{,*!/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= yeoman.dist %>/server/public/stylesheets/fonts/!*'
         ]
       }
-    },
+    },*/
 
     concat: {
       options: {
@@ -260,169 +193,14 @@ module.exports = function (grunt) {
     },
 
 
-    // Reads HTML for usemin blocks to enable smart builds that automatically
-    // concat, minify and revision files. Creates configurations in memory so
-    // additional tasks can operate on them
-    useminPrepare: {
-      html: 'server/app/index.scala.html',
-      options: {
-        dest: '<%= yeoman.dist %>',
-        flow: {
-          html: {
-            steps: {
-              js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
-            },
-            post: {}
-          }
-        }
-      }
-    },
-
-    // Performs rewrites based on filerev and the useminPrepare configuration
-    usemin: {
-      html: ['<%= yeoman.dist %>/server/public/templates/{,*/}*.html', 'components/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/server/public/stylesheets/{,*/}*.css'],
-      options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/server/public/images']
-      }
-    },
-
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/stylesheets/main.css': [
-    //         '.tmp/stylesheets/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: 'server/public/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    svgmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: 'server/public/images',
-          src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-
-
-    // ng-annotate tries to make the code safe for minification automatically
-    // by using the Angular long form for dependency injection.
-    //ngAnnotate: {
-    //dist: {
-    //files: [{
-    //expand: true,
-    //cwd: '.tmp/concat/scripts',
-    //src: ['*.js', '!oldieshim.js'],
-    //dest: '.tmp/concat/scripts'
-    //}]
-    //}
-    //},
-
     // Replace Google CDN references
     cdnify: {
       dist: {
-        html: ['<%= yeoman.dist %>/*.html']
+        html: ['server/public/templates/*.html']
       }
-    },
-
-    // Copies remaining files to places other tasks can use
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            '*.html',
-            'server/public/{,*/}*.html',
-            'server/public/images/{,*/}*.{webp}',
-            'server/public/fonts/{,*/}*.*'
-          ]
-        }, {
-          expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
-        }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>server/public/stylesheets',
-        dest: '.tmp/stylesheets/',
-        src: '{,*/}*.css'
-      }
-    },
-
-    // Run some tasks in parallel to speed up the build process
-    concurrent: {
-      server: [
-        'compass:server'
-      ],
-      test: [
-        'compass'
-      ],
-      dist: [
-        'compass:dist',
-        'imagemin',
-        'svgmin'
-      ]
-    },
-
-    // Test settings
-    /*karma: {
-     unit: {
-     configFile: 'test/karma.conf.js'
-     }
-     }*/
+    }
   });
 
-  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve:' + target]);
-  });
-
-  grunt.registerTask('test', [
-    'clean:server',
-    'connect:test',
-    //'karma',
-   'watch'
-  ]);
 
   grunt.registerTask('build', [
     'clean:dist',
@@ -439,12 +217,6 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin'
-  ]);
-
-  grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
-    'build'
   ]);
 };
 
