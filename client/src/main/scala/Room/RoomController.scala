@@ -22,7 +22,6 @@ class RoomController(scope: RoomScope, service: RoomService) extends AbstractCon
   scope.rooms = js.Array[Room]()
   service.findAll() onComplete {
     case Success(rooms) =>
-      println(rooms)
       scope.$apply {
         scope.rooms = rooms.toJSArray
       }

@@ -1,7 +1,5 @@
 @(message: String)
 
 @main("Play with Scala.js") {
-<ul data-ng-controller = "roomController" class="grid">
-  <room-min class="column large-3" data-ng-repeat="room in rooms">YO : {{room.name}}</room-min>
-</ul>
+  <div data-ng-view=""></div>
 }

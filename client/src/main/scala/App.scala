@@ -1,5 +1,5 @@
-import Room.{RoomMinDirective, RoomController}
-import com.greencatsoft.angularjs.Angular
+import Room.{RoomController, RoomMinDirective}
+import com.greencatsoft.angularjs._
 import example.RoomServiceFactory
 
 import scala.scalajs.js.JSApp
@@ -15,5 +15,6 @@ object App extends JSApp {
     .factory[RoomServiceFactory]
     .controller[RoomController]
     .directive[RoomMinDirective]
+    .config(RoutingConfig)
   }
 }
