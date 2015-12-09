@@ -12,6 +12,11 @@ object RoutingConfig extends Config {
     routeProvider
       .when(path = "/",
         route = Route(templateUrl = "/assets/templates/main.html", title = "Main"))
+      .when(
+        path = "/rooms/:id",
+        route = Route(
+          templateUrl = "/assets/templates/Room/room.html",
+          title = "Room"))
 
   }
 }
